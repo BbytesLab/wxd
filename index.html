@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Слово дня</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="tb-left">
+    <a class="tb-btn" href="about.html" target="_blank" rel="noopener" aria-label="Правила">?</a>
+  </div>
+
+  <div class="tb-title" id="appTitle">Слово дня</div>
+
+  <div class="tb-right">
+    <a class="tb-btn" id="btnStats" href="stats.html" aria-label="Статистика">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 3h2v18H5V3zm6 6h2v12h-2V9zm6-4h2v16h-2V5z"/>
+      </svg>
+    </a>
+     <button id="langToggle" class="lang-btn" aria-label="Змінити мову"></button>
+    <a class="tb-btn insta-btn" href="https://www.instagram.com/priama.mova/" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+        <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9zm4.5 3a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11zm0 2a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5-2a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+      </svg>
+    </a>
+  </div>
+</header>
+  <main class="screen">
+  
+    <div id="pattern" class="pattern"></div>
+
+
+    <form id="word-form" class="card input-card" onsubmit="return false" autocomplete="off" novalidate>
+      <input
+        id="word-input"
+        type="text"
+        placeholder="Напишіть своє слово"
+        autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
+        inputmode="text"
+        enterkeyhint="done"
+      />
+      <button type="submit" style="display:none"></button>
+    </form>
+
+   
+    <section id="words-list" class="card list-card" aria-live="polite"></section>
+
+  
+    <div class="bottom">
+      <div class="card score-card"><div class="score" id="score">БАЛИ = 0</div></div>
+      <div class="card hint-card"><button type="button" id="hintBtn">ВІДКРИТИ ЛІТЕРУ</button></div>
+    </div>
+  </main>
+
+<script src="words-uk.js"></script>
+<script src="words-en.js"></script>
+<script src="i18n.js"></script>
+<script defer src="script.js"></script>
+
+  
+</body>
+</html>
