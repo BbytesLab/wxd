@@ -109,9 +109,11 @@ body{
   white-space: pre;
   display:flex; justify-content:center; align-items:center;
   gap:56px; user-select:none;
-  font-weight:700; letter-spacing:.06em;
+  font-weight:700; 
   font-size:clamp(18px,4.8vw,22px);
 }
+.pattern__mid{ letter-spacing:0; }       /* середина без розривів */
+.pattern__edge{ margin:0 .4ch; }         /* невеликий просвіт зліва/справа від середини */
 
 
 .card{
