@@ -75,20 +75,13 @@ function inWordsOrDict(str){
 
 function createPattern(word, lettersToShow) {
   if (!word || word.length < 2) return word || '';
-
-  const first = word[0];
-  const last = word[word.length - 1];
-
-  const middle = Array(5).fill('_');
-
-  // відкриваємо потрібну кількість літер зліва направо
-  for (let i = 1; i <= lettersToShow && i < word.length - 1; i++) {
-    middle[i - 1] = word[i];
+  let s = word[0];
+  for (let i = 1; i < word.length - 1; i++) {
+    s += (i <= lettersToShow) ? word[i] : ' ';
   }
-
-  // з'єднуємо все разом
-  return first + middle.join('') + last;
+  return s + word[word.length - 1];
 }
+
 function firstLastMatch(a, b) {
   if (!a || !b) return false;
   return a[0] === b[0] && a[a.length - 1] === b[b.length - 1];
