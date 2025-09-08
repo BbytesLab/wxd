@@ -74,12 +74,12 @@ function inWordsOrDict(str){
 }
 
 function createPattern(word, lettersToShow) {
-  if (!word || word.length < 2) return word || '';
+  if (!word || word.length < 2) return '[' + (word || '') + ']';
   let s = word[0];
   for (let i = 1; i < word.length - 1; i++) {
     s += (i <= lettersToShow) ? word[i] : ' ';
   }
-  return s + word[word.length - 1];
+  return '[' + s + word[word.length - 1] + ']';
 }
 
 function firstLastMatch(a, b) {
