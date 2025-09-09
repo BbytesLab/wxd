@@ -296,7 +296,8 @@ function onSubmitWord(raw) {
   if (upper === state.secretWord) {
     state.lettersToShow = Math.max(0, state.secretWord.length - 2);
     renderPattern(); // показати повне слово
-    toast.ok(I18N.t('toast_correct'));
+    //toast.ok(I18N.t('toast_correct'));
+
     state.score += 1000;
     renderScore();
     state.lettersToShow = state.secretWord.length - 2;
@@ -305,6 +306,7 @@ function onSubmitWord(raw) {
     persistState();
 
     statsOnWin(state.lang, state.score);
+    openWinModal(state.secretWord);
     return;
   }
 
@@ -325,6 +327,7 @@ function onSubmitWord(raw) {
   if (state.guesses.includes(upper)) return;
 
   // 5) Додаємо слово і бали
+
   state.guesses.push(upper);
   addWordToTop(upper);
   state.score += upper.length * 10;
@@ -332,27 +335,40 @@ function onSubmitWord(raw) {
   renderHint();
   persistState();
   statsEnsureBestScore(state.lang, state.score);
+  toast.info(I18N.t('toast_nice_try') + ' +' + (upper.length * 10 ) + ' ' + I18N.t('points_word'));
+
 }
 
 /* ---------- підказка ---------- */
 function revealNextLetter() {
-  // перша активність за сьогодні?
-  statsOnFirstActivity(state.lang);
-
   const cost = nextHintCost();
-  const canMore = state.lettersToShow < Math.max(0, state.secretWord.length - 2);
+  const maxInner = Math.max(0, state.secretWord.length - 2); 
+  const canMore = state.lettersToShow < maxInner;
   if (!canMore || state.score < cost) return;
 
+  const was = state.lettersToShow; 
+
   state.score -= cost;
-  state.lettersToShow += 1;
+  state.lettersToShow = Math.min(was + 1, maxInner);
 
   renderPattern();
   renderScore();
   renderHint();
   persistState();
+
+  
+  const becameFull = (was < maxInner) && (state.lettersToShow >= maxInner);
+  if (becameFull) {
+  
+    state.score += 1000;
+    renderScore();
+    persistState();
+
+    openWinModal(state.secretWord);
+    statsOnWin(state.lang, state.score);
+  }
 }
 
-/* ---------- добовий контроль: якщо день змінився — обнулити добові речі ---------- */
 function ensureTodayState(){
   const today = epochDayUTC();
   if (state.dayEpoch !== today){
@@ -373,9 +389,9 @@ function ensureTodayState(){
 
 /* ---------- перемикання мови ---------- */
 function applyLang(lang){
-  I18N.setLang(lang); // зберегли поточну мову
-  state = makeState(lang); // отримали слово дня, стан і множини для цієї мови
-  ensureTodayState(); // якщо новий день — обнулити добові дані
+  I18N.setLang(lang); 
+  state = makeState(lang); 
+  ensureTodayState(); 
 
   renderPattern();
   renderScore();
@@ -387,7 +403,13 @@ function applyLang(lang){
 
   persistState();
   statsDailyTick(lang);
-    statsEnsureBestScore(state.lang, state.score);
+  statsEnsureBestScore(state.lang, state.score);
+
+  const els = document.querySelectorAll('[data-i18n]');
+  els.forEach(el => {
+  const key = el.getAttribute('data-i18n');
+  el.textContent = I18N.t(key);
+  });
 }
 
 function statsEnsureBestScore(lang, score){
@@ -398,9 +420,61 @@ function statsEnsureBestScore(lang, score){
   }
 }
 
+function openWinModal(word){
+  const m = document.getElementById('winModal');
+  if (!m) return;
+
+  const tt = document.getElementById('winTitle'); tt && (tt.textContent = I18N.t('win_title'));
+  const ss = document.getElementById('winSub'); ss && (ss.textContent = I18N.t('win_sub'));
+  const sl = document.getElementById('winScoreLabel'); sl && (sl.textContent = I18N.t('win_score_label'));
+  const ww = document.getElementById('winWord'); ww && (ww.textContent = `[${word}]`);
+  const sv = document.getElementById('winScore'); sv && (sv.textContent = String(state.score));
+
+
+  const prevOverflow = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
+  m.hidden = false;
+  m.setAttribute('aria-hidden', 'false');
+
+  const close = () => {
+    m.hidden = true;
+    m.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = prevOverflow || '';
+  };
+  m.querySelectorAll('[data-close]').forEach(btn=>{
+    btn.addEventListener('click', close, { once:true });
+  });
+
+  const shareBtn = document.getElementById('winShareBtn');
+  if (shareBtn){
+    shareBtn.textContent = I18N.t('win_share');
+    shareBtn.onclick = async () => {
+      const text = I18N.t('win_shared_text'); 
+      const isFile = location.protocol === 'file:';
+      const url = isFile ? '' : location.href;
+   
+      if (navigator.share && !isFile){
+        try {
+          await navigator.share({ title: I18N.t('title'), text, url });
+        } catch(_) {}
+        return;
+      }
+     
+      try {
+        await navigator.clipboard.writeText(`${text} ${url}`.trim());
+        toast.ok(I18N.t('toast_copied'));
+        return;
+      } catch(_) {
+        const s = `${text} ${url}`.trim();
+        window.prompt(text, s); 
+      }
+    };
+  }
+}
+
 /* ---------- init ---------- */
 function init(){
-  const form = document.getElementById('word-form');
+
   const input = document.getElementById('word-input');
   const hint = document.getElementById('hintBtn');
   const langBtn = document.getElementById('langToggle');
@@ -412,7 +486,6 @@ function init(){
     input.value = '';
   };
 
-  if (form) form.addEventListener('submit', e => { e.preventDefault(); handle(); });
   if (input) input.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.code === 'Enter' || e.keyCode === 13) {
       e.preventDefault(); handle();
@@ -427,7 +500,7 @@ function init(){
   }
 
   statsDailyTick(state.lang);
-  applyLang(I18N.getLang()); // перший рендер згідно з поточною мовою
+  applyLang(I18N.getLang()); 
 }
 
 document.readyState === 'loading'

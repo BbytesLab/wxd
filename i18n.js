@@ -17,7 +17,17 @@
       toast_correct: 'Вітаю! Ви відгадали слово!',
       toast_not_found: 'Цього слова, на жаль, немає в базі',
       toast_wrong_pattern: 'Не відповідає шаблону',
+      toast_nice_try: 'Гарна спроба',
+      points_word: 'балів',
       lang_btn_label: 'УК',
+
+      win_title       : 'Вітаю!',
+      win_sub         : 'Ви вгадали слово дня',
+      win_score_label : 'Бали сьогодні',
+      win_share       : 'Поділитися',
+      win_close       : 'Закрити',
+      win_shared_text : 'А я вже знаю слово дня! А ти?',
+      toast_copied    : 'Скопійовано в буфер обміну',
 
       // about
       about_title: 'Вгадай слово дня!',
@@ -39,6 +49,7 @@
       stats_best: 'Найкраща серія',
       stats_best_score: 'Найбільше балів',
       stats_back: '← Назад до гри'
+
     },
 
     en: {
@@ -49,7 +60,17 @@
       toast_correct: 'Congrats! You guessed the word!',
       toast_not_found: 'This word was not found',
       toast_wrong_pattern: 'Does not match the pattern',
+      toast_nice_try: 'Nice try',
+      points_word: 'points',
       lang_btn_label: 'EN',
+
+      win_title       : 'Congrats!',
+      win_sub         : 'You guessed the word of the day',
+      win_score_label : 'Today’s score',
+      win_share       : 'Share',
+      win_close       : 'Close',
+      win_shared_text : 'I already know today’s word! Do you?',
+      toast_copied    : 'Copied to clipboard',
 
       about_title: 'Guess the word of the day!',
       about_p1: 'Only the first and last letters are visible.',

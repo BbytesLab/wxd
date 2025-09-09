@@ -301,3 +301,72 @@ font-weight: 400;}
 @media (max-width:360px){
   .bottom{ flex-direction:column; }
 }
+
+/* ===== Win Modal ===== */
+.modal[hidden]{ display:none !important; }
+.modal{
+  position: fixed; inset: 0; z-index: 3000;
+  display: grid; place-items: center;
+}
+.modal__backdrop{
+  position:absolute; inset:0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(4px);
+}
+.modal__card{
+  position: relative;
+  width: min(92vw, 440px);
+  padding: 20px 16px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--stroke);
+  /* зробимо більш непрозорим, щоб не читався фон */
+  background: rgba(18,18,18,.92);
+  color: var(--text);
+  line-height: 1.25;
+  box-shadow: 0 10px 32px rgba(0,0,0,.35);
+}
+
+.modal__x{
+  position:absolute; top:8px; right:8px;
+  width:28px; height:28px; border:0; border-radius:8px;
+  background:transparent; color:var(--text); cursor:pointer;
+}
+
+.modal__title{
+  margin: 6px 0 0;
+  text-align:center;
+  font-weight:800; letter-spacing:.04em;
+  font-size: clamp(18px, 5.2vw, 22px);
+}
+.modal__subtitle{
+  margin: 4px 0 10px;
+  text-align:center; opacity:.9;
+  font-size: clamp(12px, 3.6vw, 14px);
+}
+
+.modal__word{
+  margin: 8px auto 6px;
+  text-align:center; user-select:none;
+  font-weight:800; letter-spacing:.10em;
+  font-size: clamp(20px, 6vw, 28px);
+}
+
+.modal__score{
+  margin: 8px 0 0; display:grid; gap:4px; justify-items:center;
+}
+.modal__score-label{
+  opacity:.9; font-size: clamp(12px, 3.6vw, 13px); letter-spacing:.02em;
+}
+.modal__score-value{
+  font-weight:800; font-size: clamp(22px, 6vw, 28px); letter-spacing:.04em;
+}
+
+.modal__actions{
+  margin-top: 12px; display:flex; gap: 10px; justify-content:center; flex-wrap:wrap;
+}
+.modal__btn{
+  padding:10px 16px; font-weight:700;
+  background: var(--glass); color: var(--text);
+  border: 1px solid var(--stroke); border-radius: var(--radius);
+}
+.modal__btn:hover{ background: rgba(255,255,255,.08); }
