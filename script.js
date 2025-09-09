@@ -480,18 +480,17 @@ function openWinModal(word){
         await navigator.share({ title: I18N.t('title'), text: msg, url });
       }
       return;
-    } catch(_) {}
-   }
+     } catch(_) {}
+    }
 
-  
-  try {
-    await navigator.clipboard.writeText(`${msg}${url ? ' ' + url : ''}`.trim());
-    toast.ok(I18N.t('toast_copied'));
-  } catch(_) {
+    try {
+     await navigator.clipboard.writeText(`${msg}${url ? ' ' + url : ''}`.trim());
+      toast.ok(I18N.t('toast_copied'));
+    } catch(_) {
     const s = `${msg}${url ? ' ' + url : ''}`.trim();
     window.prompt('', s);
-  }
-};
+    }
+   };
   }
 }
 
@@ -513,7 +512,7 @@ function shareTextSmart(text, url){
 
 /* ---------- init ---------- */
 function init(){
-
+  const form = document.getElementById('word-form');
   const input = document.getElementById('word-input');
   const hint = document.getElementById('hintBtn');
   const langBtn = document.getElementById('langToggle');
@@ -523,26 +522,31 @@ function init(){
     if (!val) return;
     onSubmitWord(val);
     input.value = '';
+    dismissKeyboard(input);
+    setTimeout(() => dismissKeyboard(input), 0); 
   };
+
+  if (form) form.addEventListener('submit', e => { e.preventDefault(); handle(); });
 
   if (input) input.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.code === 'Enter' || e.keyCode === 13) {
-      e.preventDefault(); handle();
+      e.preventDefault();
+      handle();
     }
   });
+
   if (hint) hint.addEventListener('click', () => {
-  dismissKeyboard(input);   
-  revealNextLetter();
-    });  
-  if (langBtn){
-    langBtn.addEventListener('click', ()=>{
-      const next = I18N.getLang() === 'uk' ? 'en' : 'uk';
-      applyLang(next);
-    });
-  }
+    dismissKeyboard(input);
+    revealNextLetter();
+  });
+
+  if (langBtn) langBtn.addEventListener('click', () => {
+    const next = I18N.getLang() === 'uk' ? 'en' : 'uk';
+    applyLang(next);
+  });
 
   statsDailyTick(state.lang);
-  applyLang(I18N.getLang()); 
+  applyLang(I18N.getLang());
 }
 
 document.readyState === 'loading'

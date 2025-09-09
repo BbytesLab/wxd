@@ -40,20 +40,20 @@
     <div id="pattern" class="pattern"></div>
 
 
-    <div id="word-form" class="card input-card" onsubmit="return false" autocomplete="off" novalidate>
-      <input
-        id="word-input"
-        type="text"
-        placeholder="Напишіть своє слово"
-        autocomplete="off"
-        autocapitalize="off"
-        autocorrect="off"
-        spellcheck="false"
-        inputmode="text"
-        enterkeyhint="done"
-      />
-      <button type="submit" style="display:none"></button>
-    </div>
+  <form id="word-form" class="card input-card" autocomplete="off" novalidate>
+  <input
+    id="word-input"
+    type="search"            
+    placeholder="Напишіть своє слово"
+    autocomplete="off"
+    autocapitalize="off"
+    autocorrect="off"
+    spellcheck="false"
+    inputmode="search"       
+    enterkeyhint="done"
+  />
+  <button type="submit" style="display:none"></button>
+</form>
 
    
     <section id="words-list" class="card list-card" aria-live="polite"></section>
