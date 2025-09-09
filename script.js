@@ -369,6 +369,25 @@ function revealNextLetter() {
   }
 }
 
+function isIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS
+}
+
+function dismissKeyboard(input){
+  try{
+    input?.blur();
+    if (isIOS()){
+      // маленький iOS-хак: на мить робимо readOnly, щоб гарантовано сховалась клавіатура
+      const prev = input.readOnly;
+      input.readOnly = true;
+      setTimeout(()=>{ input.readOnly = prev; }, 50);
+      // прибираємо можливий стрибок сторінки
+      window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+    }
+  }catch(_){}
+}
+
 function ensureTodayState(){
   const today = epochDayUTC();
   if (state.dayEpoch !== today){
@@ -449,27 +468,47 @@ function openWinModal(word){
   if (shareBtn){
     shareBtn.textContent = I18N.t('win_share');
     shareBtn.onclick = async () => {
-      const text = I18N.t('win_shared_text'); 
-      const isFile = location.protocol === 'file:';
-      const url = isFile ? '' : location.href;
-   
-      if (navigator.share && !isFile){
-        try {
-          await navigator.share({ title: I18N.t('title'), text, url });
-        } catch(_) {}
-        return;
+    const msg = I18N.t('win_shared_text');
+    const isFile = location.protocol === 'file:';
+    const url = isFile ? '' : location.href;
+
+    if (navigator.share && !isFile) {
+     try {
+      if (isIOS()) {
+        await navigator.share({ text: `${msg}${url ? '\n' + url : ''}`.trim() });
+      } else {
+        await navigator.share({ title: I18N.t('title'), text: msg, url });
       }
-     
-      try {
-        await navigator.clipboard.writeText(`${text} ${url}`.trim());
-        toast.ok(I18N.t('toast_copied'));
-        return;
-      } catch(_) {
-        const s = `${text} ${url}`.trim();
-        window.prompt(text, s); 
-      }
-    };
+      return;
+    } catch(_) {}
+   }
+
+  
+  try {
+    await navigator.clipboard.writeText(`${msg}${url ? ' ' + url : ''}`.trim());
+    toast.ok(I18N.t('toast_copied'));
+  } catch(_) {
+    const s = `${msg}${url ? ' ' + url : ''}`.trim();
+    window.prompt('', s);
   }
+};
+  }
+}
+
+function shareTextSmart(text, url){
+  const isFile = location.protocol === 'file:';
+  const safeURL = isFile ? '' : (url || location.href);
+  if (navigator.share && !isFile){
+    if (isIOS()){
+      return navigator.share({ text: `${text}${safeURL ? '\n' + safeURL : ''}`.trim() });
+    }else{
+      return navigator.share({ title: I18N.t('title'), text, url: safeURL || undefined });
+    }
+  }
+
+  return navigator.clipboard.writeText(`${text}${safeURL ? ' ' + safeURL : ''}`.trim())
+    .then(()=> toast.ok(I18N.t('toast_copied')))
+    .catch(()=> prompt('', `${text}${safeURL ? ' ' + safeURL : ''}`.trim()));
 }
 
 /* ---------- init ---------- */
@@ -491,7 +530,10 @@ function init(){
       e.preventDefault(); handle();
     }
   });
-  if (hint) hint.addEventListener('click', revealNextLetter);
+  if (hint) hint.addEventListener('click', () => {
+  dismissKeyboard(input);   
+  revealNextLetter();
+    });  
   if (langBtn){
     langBtn.addEventListener('click', ()=>{
       const next = I18N.getLang() === 'uk' ? 'en' : 'uk';
