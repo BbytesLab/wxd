@@ -439,6 +439,29 @@ function statsEnsureBestScore(lang, score){
   }
 }
 
+
+function formatInt(n){
+  try {
+    return Number(n||0).toLocaleString('uk-UA').replace(/\u00A0/g,' ');
+  } catch { return String(n||0); }
+}
+
+function buildAttemptsShareText(guesses, secretWord, totalScore){
+  const nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
+  const n = Math.max(0, (secretWord||'').length);
+  const bar = n > 0 ? '░'.repeat(n) : '░░░';
+  const lines = [];
+  const len = Array.isArray(guesses) ? guesses.length : 0;
+
+  for (let i = 0; i < len; i++){
+    const label = nums[i] || (String(i+1).padStart(2,'0') + ')');
+    lines.push(`${label} ${bar}`);
+  }
+
+  const totalLine = `${I18N.t('share_total')}: ${formatInt(totalScore)} ${I18N.t('points_word')}`;
+  return (lines.join('\n') + (lines.length?'\n\n':'') + totalLine).trim();
+}
+
 function openWinModal(word){
   const m = document.getElementById('winModal');
   if (!m) return;
@@ -448,7 +471,6 @@ function openWinModal(word){
   const sl = document.getElementById('winScoreLabel'); sl && (sl.textContent = I18N.t('win_score_label'));
   const ww = document.getElementById('winWord'); ww && (ww.textContent = `[${word}]`);
   const sv = document.getElementById('winScore'); sv && (sv.textContent = String(state.score));
-
 
   const prevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
@@ -467,30 +489,34 @@ function openWinModal(word){
   const shareBtn = document.getElementById('winShareBtn');
   if (shareBtn){
     shareBtn.textContent = I18N.t('win_share');
+
+  
+    const attemptsText = buildAttemptsShareText(state.guesses, state.secretWord, state.score);
+
     shareBtn.onclick = async () => {
-    const msg = I18N.t('win_shared_text');
-    const isFile = location.protocol === 'file:';
-    const url = isFile ? '' : location.href;
+      const isFile = location.protocol === 'file:';
+      const url = isFile ? '' : location.href;
 
-    if (navigator.share && !isFile) {
-     try {
-      if (isIOS()) {
-        await navigator.share({ text: `${msg}${url ? '\n' + url : ''}`.trim() });
-      } else {
-        await navigator.share({ title: I18N.t('title'), text: msg, url });
+      if (navigator.share && !isFile) {
+        try {
+          if (isIOS()) {
+            
+            await navigator.share({ text: `${attemptsText}${url ? '\n' + url : ''}`.trim() });
+          } else {
+            await navigator.share({ title: I18N.t('title'), text: attemptsText, url });
+          }
+          return;
+        } catch {}
       }
-      return;
-     } catch(_) {}
-    }
 
-    try {
-     await navigator.clipboard.writeText(`${msg}${url ? ' ' + url : ''}`.trim());
-      toast.ok(I18N.t('toast_copied'));
-    } catch(_) {
-    const s = `${msg}${url ? ' ' + url : ''}`.trim();
-    window.prompt('', s);
-    }
-   };
+     
+      try {
+        await navigator.clipboard.writeText(`${attemptsText}${url ? ' ' + url : ''}`.trim());
+        toast.ok(I18N.t('toast_copied'));
+      } catch {
+        window.prompt('', `${attemptsText}${url ? ' ' + url : ''}`.trim());
+      }
+    };
   }
 }
 

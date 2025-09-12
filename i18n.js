@@ -20,6 +20,7 @@
       toast_nice_try: 'Гарна спроба',
       points_word: 'балів',
       lang_btn_label: 'УК',
+      share_total: "Загалом",
 
       win_title       : 'Вітаю!',
       win_sub         : 'Ви вгадали слово дня',
@@ -63,6 +64,7 @@
       toast_nice_try: 'Nice try',
       points_word: 'points',
       lang_btn_label: 'EN',
+      share_total: "Total",
 
       win_title       : 'Congrats!',
       win_sub         : 'You guessed the word of the day',
