@@ -447,19 +447,18 @@ function formatInt(n){
 }
 
 function buildAttemptsShareText(guesses, secretWord, totalScore){
-  const nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
-  const n = Math.max(0, (secretWord||'').length);
-  const bar = n > 0 ? '░'.repeat(n) : '░░░';
+  const nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
   const lines = [];
-  const len = Array.isArray(guesses) ? guesses.length : 0;
 
-  for (let i = 0; i < len; i++){
+  for (let i = 0; i < guesses.length; i++){
+    const w = guesses[i]; 
     const label = nums[i] || (String(i+1).padStart(2,'0') + ')');
+    const bar = (w && w.length > 0) ? '░'.repeat(w.length) : '░░░';
     lines.push(`${label} ${bar}`);
   }
 
-  const totalLine = `${I18N.t('share_total')}: ${formatInt(totalScore)} ${I18N.t('points_word')}`;
-  return (lines.join('\n') + (lines.length?'\n\n':'') + totalLine).trim();
+  const totalLine = `${I18N.t('share_total')}: ${totalScore} ${I18N.t('points_word')}`;
+  return (lines.join('\n') + '\n\n' + totalLine).trim();
 }
 
 function openWinModal(word){
