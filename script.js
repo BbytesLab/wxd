@@ -447,7 +447,7 @@ function formatInt(n){
 }
 
 function buildAttemptsShareText(guesses, secretWord, totalScore){
-  const nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+  const nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
   const lines = [];
 
   for (let i = 0; i < guesses.length; i++){
@@ -553,12 +553,14 @@ function init(){
 
   if (form) form.addEventListener('submit', e => { e.preventDefault(); handle(); });
 
-  if (input) input.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.code === 'Enter' || e.keyCode === 13) {
-      e.preventDefault();
-      handle();
-    }
+  input.addEventListener('blur', () => {
+  const val = (input.value || '').trim();
+  if (val) {
+    onSubmitWord(val);
+    input.value = '';
+  }
   });
+
 
   if (hint) hint.addEventListener('click', () => {
     dismissKeyboard(input);
