@@ -553,14 +553,6 @@ function init(){
 
   if (form) form.addEventListener('submit', e => { e.preventDefault(); handle(); });
 
-  input.addEventListener('blur', () => {
-  const val = (input.value || '').trim();
-  if (val) {
-    onSubmitWord(val);
-    input.value = '';
-  }
-  });
-
 
   if (hint) hint.addEventListener('click', () => {
     dismissKeyboard(input);
