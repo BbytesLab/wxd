@@ -543,26 +543,41 @@ function init(){
   const langBtn = document.getElementById('langToggle');
 
   const handle = () => {
-    const val = (input.value || '').trim();
+    const val = (input && input.value || '').trim();
     if (!val) return;
+
     onSubmitWord(val);
-    input.value = '';
-    dismissKeyboard(input);
-    setTimeout(() => dismissKeyboard(input), 0); 
+    if (input) {
+      input.value = '';
+    
+      setTimeout(() => dismissKeyboard(input), 50);
+    }
   };
 
-  if (form) form.addEventListener('submit', e => { e.preventDefault(); handle(); });
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handle();
+    });
+  }
 
 
-  if (hint) hint.addEventListener('click', () => {
-    dismissKeyboard(input);
-    revealNextLetter();
-  });
+  if (hint) {
+    hint.addEventListener('click', () => {
+      if (input) setTimeout(() => dismissKeyboard(input), 50);
+      revealNextLetter();
+    });
+  }
 
-  if (langBtn) langBtn.addEventListener('click', () => {
-    const next = I18N.getLang() === 'uk' ? 'en' : 'uk';
-    applyLang(next);
-  });
+ 
+  if (langBtn) {
+    langBtn.addEventListener('click', () => {
+      const next = I18N.getLang() === 'uk' ? 'en' : 'uk';
+      applyLang(next);
+    });
+  }
+
 
   statsDailyTick(state.lang);
   applyLang(I18N.getLang());
