@@ -537,6 +537,7 @@ function shareTextSmart(text, url){
 
 /* ---------- init ---------- */
 function init(){
+
   const form = document.getElementById('word-form');
   const input = document.getElementById('word-input');
   const hint = document.getElementById('hintBtn');
@@ -549,8 +550,6 @@ function init(){
     onSubmitWord(val);
     if (input) {
       input.value = '';
-    
-      setTimeout(() => dismissKeyboard(input), 50);
     }
   };
 
@@ -565,7 +564,6 @@ function init(){
 
   if (hint) {
     hint.addEventListener('click', () => {
-      if (input) setTimeout(() => dismissKeyboard(input), 50);
       revealNextLetter();
     });
   }
