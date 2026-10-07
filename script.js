@@ -11,6 +11,7 @@ function rebuildSets(lang){
   DICT_LO = new Set(DICT.map(w => String(w).toLowerCase()));
 }
 
+
 function epochDayUTC(){
   const now = new Date();
   const ms = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
@@ -22,9 +23,9 @@ function lcgIndex(epochDay, wordsCount){
   return ((epochDay * 1103515245 + 12345) & 0x7fffffff) % wordsCount;
 }
 
-
+/* ---------- вибір наборів слів за мовою (з фолбеком) ---------- */
 function getWordSets(lang){
-
+  if (lang === 'uk') return { WORDS: (window.WORDS_UK || []), DICT: (window.DICT_UK || []) };
   return { WORDS: (window.WORDS_EN || []), DICT: (window.DICT_EN || []) };
 }
 
@@ -377,11 +378,9 @@ function dismissKeyboard(input){
   try{
     input?.blur();
     if (isIOS()){
-      // маленький iOS-хак: на мить робимо readOnly, щоб гарантовано сховалась клавіатура
       const prev = input.readOnly;
       input.readOnly = true;
       setTimeout(()=>{ input.readOnly = prev; }, 50);
-      // прибираємо можливий стрибок сторінки
       window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
     }
   }catch(_){}
@@ -395,7 +394,6 @@ function ensureTodayState(){
     state.guesses = [];
     state.score = 0;
 
-    // старі добові ключі з минулого дня залишаться в LS, але це не заважає
     persistState();
     renderPattern();
     renderScore();
@@ -407,7 +405,6 @@ function ensureTodayState(){
 
 /* ---------- перемикання мови ---------- */
 function applyLang(lang){
-  lang = 'en';
   I18N.setLang(lang); 
   state = makeState(lang); 
   ensureTodayState(); 
