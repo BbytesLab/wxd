@@ -11,14 +11,14 @@ function rebuildSets(lang){
   DICT_LO = new Set(DICT.map(w => String(w).toLowerCase()));
 }
 
-/* ---------- доба UTC як в апці ---------- */
+
 function epochDayUTC(){
   const now = new Date();
   const ms = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
   return Math.floor(ms / 86400000);
 }
 
-/* ---------- індекс LCG як у твоєму Java-коді ---------- */
+
 function lcgIndex(epochDay, wordsCount){
   return ((epochDay * 1103515245 + 12345) & 0x7fffffff) % wordsCount;
 }
@@ -378,11 +378,9 @@ function dismissKeyboard(input){
   try{
     input?.blur();
     if (isIOS()){
-      // маленький iOS-хак: на мить робимо readOnly, щоб гарантовано сховалась клавіатура
       const prev = input.readOnly;
       input.readOnly = true;
       setTimeout(()=>{ input.readOnly = prev; }, 50);
-      // прибираємо можливий стрибок сторінки
       window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
     }
   }catch(_){}
@@ -396,7 +394,6 @@ function ensureTodayState(){
     state.guesses = [];
     state.score = 0;
 
-    // старі добові ключі з минулого дня залишаться в LS, але це не заважає
     persistState();
     renderPattern();
     renderScore();
